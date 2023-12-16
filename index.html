@@ -1,21 +1,16 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
+<html>
+  <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Geospatial Game</title>
-    <link rel="stylesheet" href="styles.css">
-</head>
-
-<body>
+    <title>GeoQuest</title>
+    <link rel="stylesheet" type="text/css" href="styles.css">
+  </head>
+  <body>
     <div id="game-container">
-        <h1>Guess the Location!</h1>
-        <img id="satellite-image" alt="Satellite Image">
-        <br>
-        <button onclick="checkGuess()">Submit Guess</button>
-        <div id="score">Score: 0</div>
+      <img id="street-view" src="">
+      <button id="submit-guess">Submit Guess</button>
+      <p id="score">0</p>
     </div>
-
     <script src="script.js"></script>
-</body>
+  </body>
 </html>
