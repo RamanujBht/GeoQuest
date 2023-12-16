@@ -1,50 +1,74 @@
-/* script.js */
+// Initialize the Google Maps API
+const mapsScript = document.createElement('script');
+mapsScript.src = 'https://maps.googleapis.com/maps/api/js?key=AIzaSyDAlEvaRD66XpHWNYV0am2fo9kCNXz8mBw&callback=initMap';
+document.body.appendChild(mapsScript);
 
-const game = {
-    score: 0,
-    currentImageIndex: 0,
-    images: [
-        { src: 'image1.jpg', location: 'City A' },
-        { src: 'image2.jpg', location: 'City B' },
-        // Add more images and their locations
-    ],
+// Global variables
+let game = {
+  score: 0,
+  location: null
 };
 
-function loadSatelliteImage() {
-    const imageElement = document.getElementById('satellite-image');
-    const currentImage = game.images[game.currentImageIndex];
+// Initialize the map and game
+function initMap() {
+  const map = new google.maps.Map(document.getElementById('map'), {
+    center: {lat: -34.397, lng: 150.644},
+    zoom: 8
+  });
 
-    if (currentImage) {
-        imageElement.src = currentImage.src;
+  // Get a random street view location
+  getStreetView(map);
+}
+
+// Get a random street view location
+function getStreetView(map) {
+  const streetViewService = new google.maps.StreetViewService();
+  const panorama = new google.maps.StreetViewPanorama(
+    document.getElementById('street-view'), {
+      position: {lat: -34.397, lng: 150.644},
+      pov: {
+        heading: 34,
+        pitch: 10
+      }
+    });
+
+  streetViewService.getPanoramaByLocation(game.location, 100, (result, status) => {
+    if (status === 'OK') {
+      panorama.setPano(result.location.pano);
+      panorama.setVisible(true);
     } else {
-        // Game over logic
-        alert('Game Over! Your final score is: ' + game.score);
+      setTimeout(() => {
+        getStreetView(map);
+      }, 1000);
     }
+  });
 }
 
-function checkGuess() {
-    const userGuess = prompt('Enter your guess:');
+// Handle user input
+document.getElementById('submit-guess').addEventListener('click', () => {
+  const guess = prompt('Enter your guess');
+  checkGuess(guess);
+});
 
-    if (userGuess) {
-        const currentImage = game.images[game.currentImageIndex];
-
-        if (userGuess.toLowerCase() === currentImage.location.toLowerCase()) {
-            alert('Correct! Well done!');
-            game.score += 10;
-        } else {
-            alert('Incorrect! The correct answer is: ' + currentImage.location);
-        }
-
-        game.currentImageIndex++;
-        loadSatelliteImage();
-        updateScore();
-    }
+// Check the guess and update the score
+function checkGuess(guess) {
+  const correct = checkCorrect(guess);
+  if (correct) {
+    game.score++;
+    updateScore();
+    getStreetView(map);
+  } else {
+    alert('Incorrect guess. Try again!');
+  }
 }
 
+// Check if the guess is correct
+function checkCorrect(guess) {
+  // Implement logic to check if the guess is correct
+  return false;
+}
+
+// Update the score display
 function updateScore() {
-    const scoreElement = document.getElementById('score');
-    scoreElement.textContent = 'Score: ' + game.score;
+  document.getElementById('score').innerHTML = game.score;
 }
-
-// Initial load
-loadSatelliteImage();
